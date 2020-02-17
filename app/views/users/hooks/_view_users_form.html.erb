@@ -1,0 +1,7 @@
+<p><%= form.check_box :partial_admin, :disabled => (@user == User.current) %></p>
+<div id="partial_admin_access">
+</div>
+
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'admin_access', plugin: 'redmine_partial_admin' %>
+<% end %>
