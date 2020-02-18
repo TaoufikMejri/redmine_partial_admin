@@ -1,9 +1,20 @@
 $(document).ready(function () {
     tabAccess = ['projects', 'users', 'groups', 'permissions', 'trackers', 'statuses', 'workflow', 'custom_field', 'enumerations', 'settings', 'ldap', 'plugins', 'information']
 
-    checkboxElt = $('#user_partial_admin');
+    checkboxPartialAdmin = $('#user_partial_admin');
+    checkboxAdmin = $('#user_admin');
 
-    checkboxElt.click(function() {
+    checkboxAdmin.click(function () {
+        if (checkboxPartialAdmin.prop("checked") == true) {
+            checkboxPartialAdmin.prop("checked", false);
+            $('#partial_admin_access').html('');
+        }
+    });
+
+    checkboxPartialAdmin.click(function() {
+        if (checkboxAdmin.prop("checked") == true) {
+            checkboxAdmin.prop("checked", false);
+        }
         if($(this).prop("checked") == true){
             $.each(tabAccess, function(index,value) {
                 var pElt = $('<p></p>');
@@ -18,7 +29,8 @@ $(document).ready(function () {
                 pElt.append(input);
                 $('#partial_admin_access').append(pElt);
             });
-        } else {
+        }
+        else {
             $('#partial_admin_access').html('');
         }
     })

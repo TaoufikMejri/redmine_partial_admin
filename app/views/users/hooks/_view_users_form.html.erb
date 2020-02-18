@@ -1,5 +1,22 @@
-<p><%= form.check_box :partial_admin, :disabled => (@user == User.current) %></p>
+<p><%= form.check_box :partial_admin, :disabled => (@user == User.current), label: 'Partial Administrator' %></p>
 <div id="partial_admin_access">
+  <% if User.current.partial_admin? || User.current.admin? %>
+    <% user = User.find params[:id] %>
+    <% user_access = user.access %>
+    <% unless user_access.blank? %>
+      <% tab_access = ['projects', 'users', 'groups', 'roles_permissions', 'trackers', 'statuses', 'workflow', 'custom_fields', 'enumerations', 'settings', 'ldap_authentification', 'plugins', 'information'] %>
+      <% tab_access.each do |tab_value| %>
+        <p>
+          <label for="<%= tab_value %>"><%= tab_value %></label>
+          <% if user_access.include? tab_value %>
+            <input type="checkbox" checked="checked" name="user[access][<%= tab_value %>]" value="<%= tab_value %>">
+          <% else %>
+            <input type="checkbox" name="user[access][<%= tab_value %>]" value="<%= tab_value %>">
+          <% end %>
+        </p>
+      <% end %>
+    <% end %>
+  <% end %>
 </div>
 
 <% content_for :header_tags do %>

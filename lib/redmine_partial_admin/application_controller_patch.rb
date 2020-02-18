@@ -1,6 +1,6 @@
 require_dependency 'application_controller'
 
-module RedminePartialAdminPatch
+module RedminePartialAdmin
   module ApplicationControllerPatch
     def self.included(base)
       base.send(:include, InstanceMethods)
@@ -23,5 +23,5 @@ module RedminePartialAdminPatch
   end
 end
 
-ApplicationController.send(:include, RedminePartialAdminPatch::ApplicationControllerPatch)
+ApplicationController.send(:include, RedminePartialAdmin::ApplicationControllerPatch)
 
