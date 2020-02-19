@@ -4,7 +4,7 @@
     <% user = User.find params[:id] %>
     <% user_access = user.access %>
     <% unless user_access.blank? %>
-      <% tab_access = ['projects', 'users', 'groups', 'roles_permissions', 'trackers', 'statuses', 'workflow', 'custom_fields', 'enumerations', 'settings', 'ldap_authentification', 'plugins', 'information'] %>
+      <% tab_access = ['projects', 'users', 'groups', 'roles', 'trackers', 'issue_statuses', 'workflows', 'custom_fields', 'enumerations', 'settings', 'ldap_authentification', 'plugins', 'info'] %>
       <% tab_access.each do |tab_value| %>
         <p>
           <label for="<%= tab_value %>"><%= tab_value %></label>

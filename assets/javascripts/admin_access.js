@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    tabAccess = ['projects', 'users', 'groups', 'permissions', 'trackers', 'statuses', 'workflow', 'custom_field', 'enumerations', 'settings', 'ldap', 'plugins', 'information']
-
+    tabAccess = ['projects', 'users', 'groups', 'roles', 'trackers', 'issue_statuses', 'workflows', 'custom_fields', 'enumerations', 'settings', 'ldap_authentification', 'plugins', 'info']
     checkboxPartialAdmin = $('#user_partial_admin');
     checkboxAdmin = $('#user_admin');
 
