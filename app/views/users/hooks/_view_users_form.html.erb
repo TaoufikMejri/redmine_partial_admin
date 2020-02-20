@@ -4,10 +4,15 @@
     <% user = User.find params[:id] %>
     <% user_access = user.access %>
     <% unless user_access.blank? %>
-      <% tab_access = ['projects', 'users', 'groups', 'roles', 'trackers', 'issue_statuses', 'workflows', 'custom_fields', 'enumerations', 'settings', 'ldap_authentification', 'plugins', 'info'] %>
-      <% tab_access.each do |tab_value| %>
+      <% tab_access = [] %>
+      <% tab_caption = [] %>
+      <% menu_items_for(:admin_menu).each do |item| %>
+        <% tab_access <<  item.name.to_s %>
+        <% tab_caption << item.caption.to_s %>
+      <% end %>
+      <% tab_access.each_with_index do |tab_value, index| %>
         <p>
-          <label for="<%= tab_value %>"><%= tab_value %></label>
+          <label for="<%= tab_value %>"><%= tab_caption[index] %></label>
           <% if user_access.include? tab_value %>
             <input type="checkbox" checked="checked" name="user[access][<%= tab_value %>]" value="<%= tab_value %>">
           <% else %>
@@ -19,6 +24,43 @@
   <% end %>
 </div>
 
-<% content_for :header_tags do %>
-  <%= javascript_include_tag 'admin_access', plugin: 'redmine_partial_admin' %>
-<% end %>
+<script>
+        $(document).ready(function () {
+                var tabAccess = <%= raw tab_access %>
+                var tabCaption = <% raw tab_caption %>
+
+                checkboxPartialAdmin = $('#user_partial_admin');
+                checkboxAdmin = $('#user_admin');
+
+                checkboxAdmin.click(function () {
+                        if (checkboxPartialAdmin.prop("checked") == true) {
+                                checkboxPartialAdmin.prop("checked", false);
+                                $('#partial_admin_access').html('');
+                        }
+                });
+
+                checkboxPartialAdmin.click(function() {
+                        if (checkboxAdmin.prop("checked") == true) {
+                                checkboxAdmin.prop("checked", false);
+                        }
+                        if($(this).prop("checked") == true){
+                                $.each(tabAccess, function(index,value) {
+                                        var pElt = $('<p></p>');
+                                        var labelElt = $('<label></label>');
+                                        var input = $('<input>');
+                                        labelElt.attr("for", value);
+                                        labelElt.text(tabCaption[index]);
+                                        input.attr('type','checkbox');
+                                        input.attr('name', 'user[access]['+value+']');
+                                        input.attr('value', value);
+                                        pElt.append(labelElt);
+                                        pElt.append(input);
+                                        $('#partial_admin_access').append(pElt);
+                                });
+                        }
+                        else {
+                                $('#partial_admin_access').html('');
+                        }
+                })
+        });
+</script>
