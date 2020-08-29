@@ -1,46 +1,43 @@
+<% tab_access = menu_items_for(:admin_menu).map{ |item| item.name.to_s } %>
+<% tab_caption = menu_items_for(:admin_menu).map{ |item| item.caption.to_s } %>
+
 <p><%= form.check_box :partial_admin, :disabled => (@user == User.current), label: l(:label_partial_admin) %></p>
 <hr>
 <div id="partial_admin_access">
-  <% if User.current.partial_admin? || User.current.admin? %>
-    <% user = User.find params[:id] %>
-    <% user_access = user.access.keys %>
-    <% user_partial_admin = user.partial_admin %>
-    <% tab_access = [] %>
-    <% tab_caption = [] %>
-    <% menu_items_for(:admin_menu).each do |item| %>
-      <% tab_access <<  item.name.to_s %>
-      <% tab_caption << item.caption.to_s %>
-    <% end %>
+  <% if User.current.partial_admin? || User.current.admin? && params[:id] %>
+    <% @user = User.find_by(id: params[:id]) %>
   <% end %>
 </div>
 
 <script>
+  function createMenu(tabCaption, tabAccess, userAccess) {
+          $.each(tabAccess, function(index,value) {
+                  var pElt = $('<p></p>');
+                  var labelElt = $('<label></label>');
+                  var input = $('<input>');
+                  labelElt.attr("for", value);
+                  labelElt.text(tabCaption[index]);
+                  input.attr('type','checkbox');
+                  input.attr('name', 'user[access]['+value+']');
+                  if($.inArray(value, userAccess) !== -1)
+                          input.attr('checked', true);
+                  input.attr('value', value);
+                  pElt.append(labelElt);
+                  pElt.append(input);
+                  $('#partial_admin_access').append(pElt);
+          });
+  }
         $(document).ready(function () {
                 var tabAccess = <%= raw tab_access %>
                 var tabCaption = <%= raw tab_caption %>
-                var userAccess = <%= raw user_access %>
-                var userPartialAdmin = <%= raw user_partial_admin %>
+                var userAccess = <%= raw(@user.nil? || @user.access.nil? ? [] : @user.access.keys) %>
+                var userPartialAdmin = <%= raw(@user.nil? ? false : @user.partial_admin) %>
 
                 var checkboxPartialAdmin = $('#user_partial_admin');
                 var checkboxAdmin = $('#user_admin');
 
-                if(userPartialAdmin === true) {
-                        $.each(tabAccess, function(index,value) {
-                                var pElt = $('<p></p>');
-                                var labelElt = $('<label></label>');
-                                var input = $('<input>');
-                                labelElt.attr("for", value);
-                                labelElt.text(tabCaption[index]);
-                                input.attr('type','checkbox');
-                                input.attr('name', 'user[access]['+value+']');
-                                if($.inArray(value, userAccess) !== -1)
-                                        input.attr('checked', true);
-                                input.attr('value', value);
-                                pElt.append(labelElt);
-                                pElt.append(input);
-                                $('#partial_admin_access').append(pElt);
-                        });
-                }
+                if(userPartialAdmin === true)
+                        createMenu(tabCaption, tabAccess, userAccess);
 
                 checkboxAdmin.click(function () {
                         checkboxPartialAdmin.prop("checked", false);
@@ -51,21 +48,7 @@
                         checkboxAdmin.prop("checked", false);
                         if($(this).prop("checked") == true){
                                 $('#partial_admin_access').html('');
-                                $.each(tabAccess, function(index,value) {
-                                        var pElt = $('<p></p>');
-                                        var labelElt = $('<label></label>');
-                                        var input = $('<input>');
-                                        labelElt.attr("for", value);
-                                        labelElt.text(tabCaption[index]);
-                                        input.attr('type','checkbox');
-                                        input.attr('name', 'user[access]['+value+']');
-                                        if(userPartialAdmin === true && $.inArray(value, userAccess) !== -1)
-                                                input.attr('checked', true);
-                                        input.attr('value', value);
-                                        pElt.append(labelElt);
-                                        pElt.append(input);
-                                        $('#partial_admin_access').append(pElt);
-                                });
+                                createMenu(tabCaption, tabAccess, userAccess);
                         }
                         else {
                                 $('#partial_admin_access').html('');
